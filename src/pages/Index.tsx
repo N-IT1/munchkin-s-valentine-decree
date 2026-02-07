@@ -2,19 +2,19 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GoldParticles from "@/components/valentine/GoldParticles";
 import GoldBorder from "@/components/valentine/GoldBorder";
-import RabbitHeist from "@/components/valentine/RabbitHeist";
+import StickManDrag from "@/components/valentine/StickManDrag";
 import HeartExplosion from "@/components/valentine/HeartExplosion";
 
 const Index = () => {
-  const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "rabbit" | "done">("entrance");
+  const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "stickman" | "done">("entrance");
   const [saidYes, setSaidYes] = useState(false);
-  const [rabbitDone, setRabbitDone] = useState(false);
+  const [stickmanDone, setStickmanDone] = useState(false);
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase("question"), 2500),
-      setTimeout(() => setPhase("buttons"), 5000),
-      setTimeout(() => setPhase("rabbit"), 6500),
+      setTimeout(() => setPhase("question"), 1500),
+      setTimeout(() => setPhase("buttons"), 3000),
+      setTimeout(() => setPhase("stickman"), 5000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -122,7 +122,7 @@ const Index = () => {
 
         {/* Act 2 — The Question */}
         <AnimatePresence>
-          {(phase === "question" || phase === "buttons" || phase === "rabbit" || phase === "done") && (
+          {(phase === "question" || phase === "buttons" || phase === "stickman" || phase === "done") && (
             <motion.div className="mb-10">
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                 {questionWords.map((word, i) => (
@@ -144,7 +144,7 @@ const Index = () => {
 
         {/* Act 3 & 4 — Buttons + Rabbit */}
         <AnimatePresence>
-          {(phase === "buttons" || phase === "rabbit" || phase === "done") && (
+          {(phase === "buttons" || phase === "stickman" || phase === "done") && (
             <motion.div
               className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 relative"
               initial={{ opacity: 0, y: 20 }}
@@ -170,14 +170,22 @@ const Index = () => {
               {/* No button area */}
               <div className="relative min-w-[140px] min-h-[56px] sm:min-h-[64px] flex items-center justify-center">
                 <AnimatePresence mode="wait">
-                  {!rabbitDone ? (
+                  {!stickmanDone ? (
                     <motion.div
                       key="no-btn-wrapper"
                       className="relative"
                       initial={{ scale: 0 }}
                       animate={
-                        phase === "rabbit"
-                          ? { x: [-0, -5, 5, -5, 0], transition: { duration: 0.4, repeat: 2 } }
+                        phase === "stickman"
+                          ? {
+                              x: [0, -5, 7, -5, 0, 0, 800],
+                              transition: {
+                                duration: 5.5,
+                                times: [0, 0.05, 0.1, 0.15, 0.22, 0.4, 1],
+                                delay: 2.2,
+                                ease: "easeInOut",
+                              },
+                            }
                           : { scale: 1 }
                       }
                       transition={{ type: "spring", stiffness: 200, delay: 0.4 }}
@@ -189,22 +197,22 @@ const Index = () => {
                           transition-all duration-300 hover:border-valentine-gold
                           min-w-[140px]"
                         animate={
-                          phase === "rabbit"
-                            ? { opacity: [1, 1, 0], x: [0, 0, 300], transition: { delay: 1.2, duration: 1 } }
+                          phase === "stickman"
+                            ? { opacity: [1, 1, 0], transition: { delay: 4.5, duration: 3.2 } }
                             : {}
                         }
                         onAnimationComplete={() => {
-                          if (phase === "rabbit") {
-                            setTimeout(() => setRabbitDone(true), 200);
+                          if (phase === "stickman") {
+                            setTimeout(() => setStickmanDone(true), 300);
                           }
                         }}
                       >
                         No
                       </motion.button>
 
-                      {/* Rabbit character */}
-                      {phase === "rabbit" && !rabbitDone && (
-                        <RabbitHeist onComplete={() => {}} />
+                      {/* Stick man dragging the button */}
+                      {phase === "stickman" && !stickmanDone && (
+                        <StickManDrag onComplete={() => {}} />
                       )}
                     </motion.div>
                   ) : (
