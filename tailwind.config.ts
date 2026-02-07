@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        serif: ["Playfair Display", "Georgia", "serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -56,6 +59,18 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        valentine: {
+          bg: "hsl(var(--valentine-bg))",
+          "bg-deep": "hsl(var(--valentine-bg-deep))",
+          gold: "hsl(var(--valentine-gold))",
+          "gold-light": "hsl(var(--valentine-gold-light))",
+          "gold-dark": "hsl(var(--valentine-gold-dark))",
+          cream: "hsl(var(--valentine-cream))",
+          "cream-soft": "hsl(var(--valentine-cream-soft))",
+          red: "hsl(var(--valentine-red))",
+          "red-light": "hsl(var(--valentine-red-light))",
+          rose: "hsl(var(--valentine-rose))",
         },
       },
       borderRadius: {
