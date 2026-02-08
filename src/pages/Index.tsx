@@ -2,19 +2,18 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import GoldParticles from "@/components/valentine/GoldParticles";
 import GoldBorder from "@/components/valentine/GoldBorder";
-import StickManDrag from "@/components/valentine/StickManDrag";
 import HeartExplosion from "@/components/valentine/HeartExplosion";
 
 const Index = () => {
-  const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "stickman" | "done">("entrance");
+  const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "runaway" | "done">("entrance");
   const [saidYes, setSaidYes] = useState(false);
-  const [stickmanDone, setStickmanDone] = useState(false);
+  const [noButtonGone, setNoButtonGone] = useState(false);
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase("question"), 1500),
       setTimeout(() => setPhase("buttons"), 3000),
-      setTimeout(() => setPhase("stickman"), 5000),
+      setTimeout(() => setPhase("runaway"), 5000),
     ];
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -122,7 +121,7 @@ const Index = () => {
 
         {/* Act 2 — The Question */}
         <AnimatePresence>
-          {(phase === "question" || phase === "buttons" || phase === "stickman" || phase === "done") && (
+          {(phase === "question" || phase === "buttons" || phase === "runaway" || phase === "done") && (
             <motion.div className="mb-10">
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                 {questionWords.map((word, i) => (
@@ -144,7 +143,7 @@ const Index = () => {
 
         {/* Act 3 & 4 — Buttons + Rabbit */}
         <AnimatePresence>
-          {(phase === "buttons" || phase === "stickman" || phase === "done") && (
+          {(phase === "buttons" || phase === "runaway" || phase === "done") && (
             <motion.div
               className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 relative"
               initial={{ opacity: 0, y: 20 }}
@@ -170,51 +169,44 @@ const Index = () => {
               {/* No button area */}
               <div className="relative min-w-[140px] min-h-[56px] sm:min-h-[64px] flex items-center justify-center">
                 <AnimatePresence mode="wait">
-                  {!stickmanDone ? (
-                    <motion.div
-                      key="no-btn-wrapper"
-                      className="relative"
+                  {!noButtonGone ? (
+                    <motion.button
+                      key="no-btn"
+                      className="px-10 py-4 sm:px-12 sm:py-5 font-serif text-lg sm:text-xl tracking-wider
+                        text-valentine-gold bg-transparent
+                        border border-valentine-gold/50 rounded-sm
+                        min-w-[140px] cursor-default"
                       initial={{ scale: 0 }}
                       animate={
-                        phase === "stickman"
+                        phase === "runaway"
                           ? {
-                              x: [0, -5, 7, -5, 0, 0, 800],
-                              transition: {
-                                duration: 5.5,
-                                times: [0, 0.05, 0.1, 0.15, 0.22, 0.4, 1],
-                                delay: 2.2,
-                                ease: "easeInOut",
-                              },
+                              // Nervous shake → jump up → spin & shrink away
+                              x: [0, -4, 6, -6, 4, -3, 5, 0, 0, 0, 300],
+                              y: [0, 0, 0, 0, 0, 0, 0, 0, -60, -40, 200],
+                              rotate: [0, -2, 3, -3, 2, -2, 3, 0, -15, 720, 1440],
+                              scale: [1, 1, 1, 1, 1, 1, 1, 1, 1.1, 0.6, 0],
+                              opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.7, 0],
                             }
                           : { scale: 1 }
                       }
-                      transition={{ type: "spring", stiffness: 200, delay: 0.4 }}
-                    >
-                      <motion.button
-                        className="px-10 py-4 sm:px-12 sm:py-5 font-serif text-lg sm:text-xl tracking-wider
-                          text-valentine-gold bg-transparent
-                          border border-valentine-gold/50 rounded-sm
-                          transition-all duration-300 hover:border-valentine-gold
-                          min-w-[140px]"
-                        animate={
-                          phase === "stickman"
-                            ? { opacity: [1, 1, 0], transition: { delay: 4.5, duration: 3.2 } }
-                            : {}
+                      transition={
+                        phase === "runaway"
+                          ? {
+                              duration: 3.5,
+                              times: [0, 0.06, 0.12, 0.18, 0.24, 0.30, 0.36, 0.50, 0.60, 0.80, 1],
+                              delay: 1.5,
+                              ease: "easeInOut",
+                            }
+                          : { type: "spring", stiffness: 200, delay: 0.4 }
+                      }
+                      onAnimationComplete={() => {
+                        if (phase === "runaway") {
+                          setNoButtonGone(true);
                         }
-                        onAnimationComplete={() => {
-                          if (phase === "stickman") {
-                            setTimeout(() => setStickmanDone(true), 300);
-                          }
-                        }}
-                      >
-                        No
-                      </motion.button>
-
-                      {/* Stick man dragging the button */}
-                      {phase === "stickman" && !stickmanDone && (
-                        <StickManDrag onComplete={() => {}} />
-                      )}
-                    </motion.div>
+                      }}
+                    >
+                      No
+                    </motion.button>
                   ) : (
                     <motion.div
                       key="choice-box"
