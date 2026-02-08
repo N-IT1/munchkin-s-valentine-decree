@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import GoldParticles from "@/components/valentine/GoldParticles";
 import GoldBorder from "@/components/valentine/GoldBorder";
 import HeartExplosion from "@/components/valentine/HeartExplosion";
+import LoveGame from "@/components/valentine/LoveGame";
 
 const Index = () => {
   const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "runaway" | "done">("entrance");
   const [saidYes, setSaidYes] = useState(false);
   const [noButtonGone, setNoButtonGone] = useState(false);
+  const [showGame, setShowGame] = useState(false);
 
   useEffect(() => {
     const timers = [
@@ -33,6 +35,10 @@ const Index = () => {
   const questionWords = ["Will", "you", "be", "my", "Valentine?"];
 
   if (saidYes) {
+    if (showGame) {
+      return <LoveGame onBack={() => setShowGame(false)} />;
+    }
+
     return (
       <div className="fixed inset-0 bg-valentine-bg overflow-hidden flex items-center justify-center">
         <HeartExplosion />
@@ -68,6 +74,22 @@ const Index = () => {
           >
             Forever yours ✨
           </motion.p>
+
+          {/* Play game button */}
+          <motion.button
+            onClick={() => setShowGame(true)}
+            className="mt-10 px-8 py-3 font-serif text-base tracking-wider text-valentine-bg
+              bg-gradient-to-r from-valentine-gold to-valentine-gold-light
+              border border-valentine-gold-light rounded-sm
+              hover:shadow-[0_0_30px_hsla(43,80%,55%,0.4)] transition-all duration-300"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 2.8, duration: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Wanna play a game? 🎮
+          </motion.button>
         </motion.div>
       </div>
     );
