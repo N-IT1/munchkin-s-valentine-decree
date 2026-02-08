@@ -170,43 +170,55 @@ const Index = () => {
               <div className="relative min-w-[140px] min-h-[56px] sm:min-h-[64px] flex items-center justify-center">
                 <AnimatePresence mode="wait">
                   {!noButtonGone ? (
-                    <motion.button
-                      key="no-btn"
-                      className="px-10 py-4 sm:px-12 sm:py-5 font-serif text-lg sm:text-xl tracking-wider
-                        text-valentine-gold bg-transparent
-                        border border-valentine-gold/50 rounded-sm
-                        min-w-[140px] cursor-default"
-                      initial={{ scale: 0 }}
-                      animate={
-                        phase === "runaway"
-                          ? {
-                              // Nervous shake → jump up → spin & shrink away
-                              x: [0, -4, 6, -6, 4, -3, 5, 0, 0, 0, 300],
-                              y: [0, 0, 0, 0, 0, 0, 0, 0, -60, -40, 200],
-                              rotate: [0, -2, 3, -3, 2, -2, 3, 0, -15, 720, 1440],
-                              scale: [1, 1, 1, 1, 1, 1, 1, 1, 1.1, 0.6, 0],
-                              opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.7, 0],
-                            }
-                          : { scale: 1 }
-                      }
-                      transition={
-                        phase === "runaway"
-                          ? {
-                              duration: 3.5,
-                              times: [0, 0.06, 0.12, 0.18, 0.24, 0.30, 0.36, 0.50, 0.60, 0.80, 1],
-                              delay: 1.5,
-                              ease: "easeInOut",
-                            }
-                          : { type: "spring", stiffness: 200, delay: 0.4 }
-                      }
-                      onAnimationComplete={() => {
-                        if (phase === "runaway") {
-                          setNoButtonGone(true);
+                    <div key="no-btn-area" className="relative">
+                      {/* "NOPE!" popup text */}
+                      {phase === "runaway" && (
+                        <motion.span
+                          className="absolute -top-8 left-1/2 -translate-x-1/2 font-serif text-valentine-gold-light text-sm font-bold pointer-events-none whitespace-nowrap"
+                          initial={{ opacity: 0, y: 8, scale: 0.5 }}
+                          animate={{ opacity: [0, 1, 1, 0], y: [8, -4, -4, -16], scale: [0.5, 1.2, 1.2, 0.8] }}
+                          transition={{ delay: 1.5, duration: 1.2, times: [0, 0.2, 0.7, 1] }}
+                        >
+                          NOPE! 🙅
+                        </motion.span>
+                      )}
+                      <motion.button
+                        className="px-10 py-4 sm:px-12 sm:py-5 font-serif text-lg sm:text-xl tracking-wider
+                          text-valentine-gold bg-transparent
+                          border border-valentine-gold/50 rounded-sm
+                          min-w-[140px] cursor-default"
+                        initial={{ scale: 0 }}
+                        animate={
+                          phase === "runaway"
+                            ? {
+                                // Nervous shake → jump up → spin & shrink away
+                                x: [0, -4, 6, -6, 4, -3, 5, 0, 0, 0, 300],
+                                y: [0, 0, 0, 0, 0, 0, 0, 0, -60, -40, 200],
+                                rotate: [0, -2, 3, -3, 2, -2, 3, 0, -15, 720, 1440],
+                                scale: [1, 1, 1, 1, 1, 1, 1, 1, 1.1, 0.6, 0],
+                                opacity: [1, 1, 1, 1, 1, 1, 1, 1, 1, 0.7, 0],
+                              }
+                            : { scale: 1 }
                         }
-                      }}
-                    >
-                      No
-                    </motion.button>
+                        transition={
+                          phase === "runaway"
+                            ? {
+                                duration: 3.5,
+                                times: [0, 0.06, 0.12, 0.18, 0.24, 0.30, 0.36, 0.50, 0.60, 0.80, 1],
+                                delay: 1.5,
+                                ease: "easeInOut",
+                              }
+                            : { type: "spring", stiffness: 200, delay: 0.4 }
+                        }
+                        onAnimationComplete={() => {
+                          if (phase === "runaway") {
+                            setNoButtonGone(true);
+                          }
+                        }}
+                      >
+                        No
+                      </motion.button>
+                    </div>
                   ) : (
                     <motion.div
                       key="choice-box"
