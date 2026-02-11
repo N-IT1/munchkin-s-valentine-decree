@@ -30,7 +30,7 @@ const QUIZ: QuizQuestion[] = [
   {
     question: "What's my favorite thing about you?",
     options: ["Your smile", "Your laugh", "Your personality", "Everything"],
-    response: "you're way more than what i ever expect i could see in a lady talk more of the love of my life..Ese, i want you to know that i see you..i see the real you and i still think you're perfect without any form of flaws and i've probably told you a trillion times already but i just honestly love you so so much..you thought me how to love a person and what it means to let someone love you and for that i'd be forever grateful. 💝",
+    response: "You're way more than what I ever expected I could see in a lady, talk more of the love of my life. Ese, I want you to know that I see you. I see the real you, and I still think you're perfect without any form of flaws. I've probably told you a trillion times already, but I just honestly love you so, so much. You taught me how to love a person and what it means to let someone love you, and for that, I'd be forever grateful. 💝",
   },
   {
     question: "How long am I keeping you?",
