@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 interface QuizQuestion {
   question: string;
   options: string[];
-  response: string; // Always shown no matter what they pick
+  response: string; // Default response
+  optionResponses?: Record<number, string>; // Custom response per option index
 }
 
 const QUIZ: QuizQuestion[] = [
@@ -12,6 +13,9 @@ const QUIZ: QuizQuestion[] = [
     question: "How much do I love you?",
     options: ["A lot", "Always and Forever", "To the moon", "It's illegal"],
     response: "Trick question — the answer is ALL OF THE ABOVE 💀💝",
+    optionResponses: {
+      1: "You're right my angel...\ni really want what we have to last always and forever, you mean the entire world to me 💝",
+    },
   },
   {
     question: "What happens if you say 'no' to being my Valentine?",
@@ -187,8 +191,8 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5, type: "spring" }}
                 >
-                  <p className="font-serif text-valentine-cream text-sm sm:text-base text-center leading-relaxed">
-                    {question.response}
+                  <p className="font-serif text-valentine-cream text-sm sm:text-base text-center leading-relaxed whitespace-pre-line">
+                    {(selectedOption !== null && question.optionResponses?.[selectedOption]) || question.response}
                   </p>
 
                   <motion.button
