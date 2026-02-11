@@ -10,7 +10,7 @@ interface QuizQuestion {
 const QUIZ: QuizQuestion[] = [
   {
     question: "How much do I love you?",
-    options: ["A lot", "More than pizza", "To the moon", "It's illegal"],
+    options: ["A lot", "Always and Forever", "To the moon", "It's illegal"],
     response: "Trick question — the answer is ALL OF THE ABOVE 💀💝",
   },
   {
