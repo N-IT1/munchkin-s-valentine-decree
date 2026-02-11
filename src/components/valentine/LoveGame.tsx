@@ -87,11 +87,8 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
           <h2 className="font-serif text-3xl sm:text-4xl text-valentine-gold mb-4">
             Quiz Complete!
           </h2>
-          <p className="text-valentine-cream text-lg mb-2 font-light">
-            You scored: 100% Loved 💯
-          </p>
-          <p className="text-valentine-gold-light text-base font-serif italic mb-8">
-            As if there was any other outcome 😏
+          <p className="text-valentine-cream text-lg mb-8 font-light">
+            you did well, my baby 💝
           </p>
           <motion.button
             onClick={onBack}
