@@ -1,122 +1,70 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-interface FloatingItem {
-  id: number;
-  emoji: string;
-  x: number;
-  y: number;
-  speed: number;
-  wobble: number;
-  size: number;
-  message: string;
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  response: string; // Always shown no matter what they pick
 }
 
-const LOVE_MESSAGES = [
-  "You're stuck with me forever 😈",
-  "No refunds on this relationship 🧾",
-  "I love you more than wifi 📶",
-  "You're my favorite notification 📱",
-  "You had me at 'hello' 🥺",
-  "10/10 would swipe right again ✨",
-  "You're the cheese to my macaroni 🧀",
-  "My heart goes brrr for you 💓",
-  "You're illegally cute, ma'am 👮‍♂️",
-  "Certified Munchkin 💝",
+const QUIZ: QuizQuestion[] = [
+  {
+    question: "How much do I love you?",
+    options: ["A lot", "More than pizza", "To the moon", "It's illegal"],
+    response: "Trick question — the answer is ALL OF THE ABOVE 💀💝",
+  },
+  {
+    question: "What happens if you say 'no' to being my Valentine?",
+    options: ["Nothing", "I cry", "World ends", "Not an option"],
+    response: "Correct! It was never an option 😈🔒",
+  },
+  {
+    question: "Who's the cutest person alive?",
+    options: ["Me obviously", "My dog", "Some celebrity", "Not sure"],
+    response: "Wrong. It's YOU, Munchkin. Final answer. No appeals. 👩‍⚖️💖",
+  },
+  {
+    question: "What's my favorite thing about you?",
+    options: ["My smile", "My laugh", "My personality", "Everything"],
+    response: "I literally cannot choose. You're a whole cheat code 🎮✨",
+  },
+  {
+    question: "How long am I keeping you?",
+    options: ["A while", "A few years", "Forever", "Until you get bored"],
+    response: "Forever. No refunds, no exchanges, no escape 🧾💝",
+  },
+  {
+    question: "Rate our relationship out of 10",
+    options: ["10", "100", "♾️", "Off the charts"],
+    response: "The scale broke. Scientists are investigating. 📊🔥",
+  },
 ];
 
-const EMOJIS = ["💖", "💝", "💕", "🥰", "😘", "💗", "💞", "🌹", "✨", "💫"];
-
-const TOTAL_TO_WIN = 8;
-
 const LoveGame = ({ onBack }: { onBack: () => void }) => {
-  const [items, setItems] = useState<FloatingItem[]>([]);
-  const [score, setScore] = useState(0);
-  const [poppedMessage, setPoppedMessage] = useState<{ text: string; x: number; y: number } | null>(null);
-  const [gameWon, setGameWon] = useState(false);
-  const [started, setStarted] = useState(false);
-  const nextId = useRef(0);
-  const spawnInterval = useRef<ReturnType<typeof setInterval>>();
-  const animationFrame = useRef<number>();
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [showResponse, setShowResponse] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [finished, setFinished] = useState(false);
 
-  const spawnItem = useCallback(() => {
-    const id = nextId.current++;
-    const msgIndex = id % LOVE_MESSAGES.length;
-    const newItem: FloatingItem = {
-      id,
-      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-      x: 10 + Math.random() * 80,
-      y: 105,
-      speed: 0.3 + Math.random() * 0.4,
-      wobble: Math.random() * 2 - 1,
-      size: 32 + Math.random() * 20,
-      message: LOVE_MESSAGES[msgIndex],
-    };
-    setItems((prev) => [...prev.slice(-12), newItem]);
-  }, []);
+  const handleSelect = (optionIndex: number) => {
+    if (showResponse) return;
+    setSelectedOption(optionIndex);
+    setShowResponse(true);
+  };
 
-  // Game loop — move items upward
-  useEffect(() => {
-    if (!started || gameWon) return;
-
-    let lastTime = performance.now();
-    const tick = (now: number) => {
-      const delta = (now - lastTime) / 16;
-      lastTime = now;
-      setItems((prev) =>
-        prev
-          .map((item) => ({
-            ...item,
-            y: item.y - item.speed * delta,
-            x: item.x + Math.sin(item.y / 12) * item.wobble * 0.3,
-          }))
-          .filter((item) => item.y > -10)
-      );
-      animationFrame.current = requestAnimationFrame(tick);
-    };
-    animationFrame.current = requestAnimationFrame(tick);
-    return () => {
-      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
-    };
-  }, [started, gameWon]);
-
-  // Spawn items periodically
-  useEffect(() => {
-    if (!started || gameWon) return;
-    // Spawn first few quickly
-    spawnItem();
-    setTimeout(spawnItem, 400);
-    setTimeout(spawnItem, 900);
-
-    spawnInterval.current = setInterval(spawnItem, 1400);
-    return () => {
-      if (spawnInterval.current) clearInterval(spawnInterval.current);
-    };
-  }, [started, gameWon, spawnItem]);
-
-  const handlePop = (item: FloatingItem, e: React.MouseEvent | React.TouchEvent) => {
-    // Remove the item
-    setItems((prev) => prev.filter((i) => i.id !== item.id));
-
-    // Show message popup
-    const rect = containerRef.current?.getBoundingClientRect();
-    const clientX = "touches" in e ? e.touches[0]?.clientX ?? 0 : e.clientX;
-    const clientY = "touches" in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
-    const x = rect ? clientX - rect.left : clientX;
-    const y = rect ? clientY - rect.top : clientY;
-
-    setPoppedMessage({ text: item.message, x, y });
-    setTimeout(() => setPoppedMessage(null), 1800);
-
-    const newScore = score + 1;
-    setScore(newScore);
-    if (newScore >= TOTAL_TO_WIN) {
-      setGameWon(true);
+  const handleNext = () => {
+    if (currentQ >= QUIZ.length - 1) {
+      setFinished(true);
+    } else {
+      setCurrentQ((prev) => prev + 1);
+      setShowResponse(false);
+      setSelectedOption(null);
     }
   };
 
-  if (gameWon) {
+  const question = QUIZ[currentQ];
+
+  if (finished) {
     return (
       <div className="fixed inset-0 bg-valentine-bg overflow-hidden flex items-center justify-center z-50">
         <motion.div
@@ -133,13 +81,13 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
             🏆💝
           </motion.div>
           <h2 className="font-serif text-3xl sm:text-4xl text-valentine-gold mb-4">
-            You caught all my love!
+            Quiz Complete!
           </h2>
           <p className="text-valentine-cream text-lg mb-2 font-light">
-            {score} hearts popped — every single one is for you, Munchkin.
+            You scored: 100% Loved 💯
           </p>
           <p className="text-valentine-gold-light text-base font-serif italic mb-8">
-            Now come give me a real kiss 😘
+            As if there was any other outcome 😏
           </p>
           <motion.button
             onClick={onBack}
@@ -157,76 +105,19 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
     );
   }
 
-  if (!started) {
-    return (
-      <div className="fixed inset-0 bg-valentine-bg overflow-hidden flex items-center justify-center z-50">
-        <motion.div
-          className="text-center px-6 max-w-md"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            className="text-5xl mb-6"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            💖
-          </motion.div>
-          <h2 className="font-serif text-3xl sm:text-4xl text-valentine-gold mb-4">
-            Catch My Love!
-          </h2>
-          <p className="text-valentine-cream text-base sm:text-lg mb-2 font-light">
-            Tap the floating hearts to pop them!
-          </p>
-          <p className="text-valentine-cream/70 text-sm mb-8">
-            Each one has a little message for you 💝
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <motion.button
-              onClick={() => setStarted(true)}
-              className="px-10 py-4 font-serif text-lg tracking-wider text-valentine-bg
-                bg-gradient-to-r from-valentine-gold to-valentine-gold-light
-                border border-valentine-gold-light rounded-sm
-                hover:shadow-[0_0_30px_hsla(43,80%,55%,0.4)] transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Let's Play! 🎮
-            </motion.button>
-            <motion.button
-              onClick={onBack}
-              className="px-8 py-4 font-serif text-sm tracking-wider text-valentine-gold
-                bg-transparent border border-valentine-gold/40 rounded-sm
-                hover:border-valentine-gold transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Back
-            </motion.button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 bg-valentine-bg overflow-hidden z-50 touch-none select-none"
-    >
-      {/* Background gradient */}
+    <div className="fixed inset-0 bg-valentine-bg overflow-hidden flex items-center justify-center z-50">
       <div className="absolute inset-0 bg-gradient-to-b from-valentine-bg-deep via-valentine-bg to-valentine-red/20" />
 
-      {/* Score */}
+      {/* Progress */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50">
         <motion.div
-          className="flex items-center gap-3 px-6 py-2 bg-valentine-red/30 border border-valentine-gold/40 rounded-full backdrop-blur-sm"
+          className="flex items-center gap-2 px-5 py-2 bg-valentine-red/30 border border-valentine-gold/40 rounded-full backdrop-blur-sm"
           initial={{ y: -40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
         >
-          <span className="text-valentine-gold font-serif text-lg">
-            💖 {score} / {TOTAL_TO_WIN}
+          <span className="text-valentine-gold font-serif text-sm">
+            {currentQ + 1} / {QUIZ.length}
           </span>
         </motion.div>
       </div>
@@ -238,64 +129,88 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
           hover:text-valentine-gold transition-colors"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        transition={{ delay: 0.3 }}
       >
         ← Back
       </motion.button>
 
-      {/* Floating items */}
-      {items.map((item) => (
-        <motion.button
-          key={item.id}
-          className="absolute cursor-pointer z-30 touch-manipulation"
-          style={{
-            left: `${item.x}%`,
-            top: `${item.y}%`,
-            fontSize: item.size,
-            transform: "translate(-50%, -50%)",
-          }}
-          onClick={(e) => handlePop(item, e)}
-          onTouchStart={(e) => handlePop(item, e)}
-          whileHover={{ scale: 1.3 }}
-          whileTap={{ scale: 0.5 }}
-          initial={{ scale: 0, rotate: -20 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {item.emoji}
-        </motion.button>
-      ))}
-
-      {/* Popped message popup */}
-      <AnimatePresence>
-        {poppedMessage && (
+      {/* Quiz content */}
+      <div className="relative z-30 w-full max-w-md px-6">
+        <AnimatePresence mode="wait">
           <motion.div
-            className="absolute z-40 pointer-events-none"
-            style={{ left: poppedMessage.x, top: poppedMessage.y }}
-            initial={{ opacity: 0, y: 0, scale: 0.5 }}
-            animate={{ opacity: 1, y: -60, scale: 1 }}
-            exit={{ opacity: 0, y: -100, scale: 0.8 }}
-            transition={{ duration: 0.6 }}
+            key={currentQ}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.4 }}
           >
-            <div className="relative -translate-x-1/2 px-4 py-2 bg-valentine-red/80 border border-valentine-gold/60
-              rounded-lg backdrop-blur-sm whitespace-nowrap max-w-[280px]">
-              <p className="text-valentine-cream text-xs sm:text-sm font-serif text-center">
-                {poppedMessage.text}
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {/* Question */}
+            <motion.h2
+              className="font-serif text-2xl sm:text-3xl text-valentine-gold text-center mb-8 leading-snug"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              {question.question}
+            </motion.h2>
 
-      {/* Instruction hint */}
-      <motion.p
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-valentine-gold/40 text-sm font-serif z-40"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 1, 1, 0] }}
-        transition={{ delay: 1, duration: 4, times: [0, 0.1, 0.8, 1] }}
-      >
-        Tap the hearts! 👆
-      </motion.p>
+            {/* Options */}
+            <div className="grid grid-cols-1 gap-3 mb-6">
+              {question.options.map((opt, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => handleSelect(i)}
+                  className={`w-full px-5 py-3.5 text-left font-serif text-base sm:text-lg rounded-sm
+                    border transition-all duration-300
+                    ${selectedOption === i
+                      ? "bg-valentine-gold/20 border-valentine-gold text-valentine-gold"
+                      : "bg-transparent border-valentine-gold/30 text-valentine-cream hover:border-valentine-gold/60 hover:bg-valentine-gold/5"
+                    }`}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.08 }}
+                  whileHover={!showResponse ? { x: 4 } : {}}
+                  whileTap={!showResponse ? { scale: 0.97 } : {}}
+                >
+                  {opt}
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Response */}
+            <AnimatePresence>
+              {showResponse && (
+                <motion.div
+                  className="mt-4 p-5 bg-valentine-red/30 border border-valentine-gold/50 rounded-sm backdrop-blur-sm"
+                  initial={{ opacity: 0, y: 16, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5, type: "spring" }}
+                >
+                  <p className="font-serif text-valentine-cream text-sm sm:text-base text-center leading-relaxed">
+                    {question.response}
+                  </p>
+
+                  <motion.button
+                    onClick={handleNext}
+                    className="mt-4 mx-auto block px-8 py-2.5 font-serif text-sm tracking-wider text-valentine-bg
+                      bg-gradient-to-r from-valentine-gold to-valentine-gold-light
+                      border border-valentine-gold-light rounded-sm
+                      hover:shadow-[0_0_20px_hsla(43,80%,55%,0.3)] transition-all duration-300"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {currentQ >= QUIZ.length - 1 ? "See results ✨" : "Next →"}
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
