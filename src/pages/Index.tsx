@@ -4,6 +4,19 @@ import GoldParticles from "@/components/valentine/GoldParticles";
 import GoldBorder from "@/components/valentine/GoldBorder";
 import HeartExplosion from "@/components/valentine/HeartExplosion";
 import LoveGame from "@/components/valentine/LoveGame";
+import PhotoSlideshow from "@/components/valentine/PhotoSlideshow";
+
+const LOVE_LETTER_PARAGRAPHS = [
+  "I don't even know where to start, because when it comes to you, my words never feel like enough.",
+  "There's something about you that found its way into the deepest parts of me. Not loudly. Not forcefully. Just… gently. And now I can't imagine my days without you woven into them. You've become the first thought in the morning and the quiet ache at night when I miss you a little too much.",
+  "You don't even realize what you've done to me.",
+  "You've made my heart softer. You've made me care in ways that scare me sometimes. You've made me want to protect something so fragile and beautiful that it feels like holding light in my hands. And yes, it's intense — because that's how loving you feels. Intense. Real. Unavoidable.",
+  "There are moments when I look at you and I don't just see a beautiful girl. I see the person who makes my chest tighten in the best way. The one who can calm me down without even trying. The one whose absence feels louder than any noise in the world.",
+  "And if I'm being honest… loving you isn't always calm. It's a roller coaster. It's the rush of missing you, the warmth of hearing your voice, the ache of wanting you closer, the fear of ever losing you. But I wouldn't trade that ride for anything. Because every high, every drop, every heartbeat in between — it's you.",
+  "Ese, you're not just someone I like. You're someone I feel. Deeply. You matter to me in ways I struggle to explain. And no matter how strong or composed I try to act sometimes, the truth is simple:",
+  "You have my heart. Fully. Softly. Completely.",
+  "Happy Valentine's Day, my love. If hearts could speak, mine would only say your name. ❤️",
+];
 
 const Index = () => {
   const [phase, setPhase] = useState<"entrance" | "question" | "buttons" | "runaway" | "done">("entrance");
@@ -40,40 +53,71 @@ const Index = () => {
     }
 
     return (
-      <div className="fixed inset-0 bg-valentine-bg overflow-hidden flex items-center justify-center">
+      <div className="fixed inset-0 bg-valentine-bg overflow-y-auto">
         <HeartExplosion />
         <GoldParticles />
+
         <motion.div
-          className="relative z-40 text-center px-6 max-w-lg"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative z-40 flex flex-col items-center px-6 py-16 max-w-2xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
         >
+          {/* Title */}
           <motion.h1
-            className="font-serif text-4xl sm:text-5xl md:text-6xl text-valentine-gold mb-6 leading-tight"
+            className="font-serif text-3xl sm:text-4xl md:text-5xl text-valentine-gold mb-10 leading-tight text-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            I knew you'd say yes, Munchkin 💝
+            I love you my sweet,
+            <br />
+            Always and forever...
+            <br />
+            <span className="text-2xl sm:text-3xl md:text-4xl">Thank you for choosing me 💝</span>
           </motion.h1>
-          <motion.p
-            className="text-valentine-cream text-lg sm:text-xl md:text-2xl font-light leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
+
+          {/* Photo slideshow */}
+          <motion.div
+            className="mb-12"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1, duration: 1 }}
           >
-            Every moment with you feels like the universe conspired just for us.
-            You're my favourite person, my safe place, my everything.
-          </motion.p>
-          <motion.p
-            className="text-valentine-gold-light text-base sm:text-lg mt-8 font-serif italic"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
+            <PhotoSlideshow />
+          </motion.div>
+
+          {/* Decorative divider */}
+          <motion.div
+            className="flex items-center gap-3 mb-10"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
           >
-            Forever yours ✨
-          </motion.p>
+            <div className="h-px w-16 bg-gradient-to-r from-transparent to-valentine-gold" />
+            <span className="text-valentine-gold text-xl">♥</span>
+            <div className="h-px w-16 bg-gradient-to-l from-transparent to-valentine-gold" />
+          </motion.div>
+
+          {/* Love letter paragraphs */}
+          {LOVE_LETTER_PARAGRAPHS.map((paragraph, i) => (
+            <motion.p
+              key={i}
+              className={`text-valentine-cream font-light leading-relaxed text-center mb-6 ${
+                i === LOVE_LETTER_PARAGRAPHS.length - 1
+                  ? "text-valentine-gold-light font-serif text-xl sm:text-2xl italic mt-4"
+                  : i === LOVE_LETTER_PARAGRAPHS.length - 2
+                  ? "text-valentine-gold font-serif text-lg sm:text-xl font-medium"
+                  : "text-base sm:text-lg"
+              }`}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+            >
+              {paragraph}
+            </motion.p>
+          ))}
 
           {/* Play game button */}
           <motion.button
@@ -83,8 +127,9 @@ const Index = () => {
               border border-valentine-gold-light rounded-sm
               hover:shadow-[0_0_30px_hsla(43,80%,55%,0.4)] transition-all duration-300"
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.8, duration: 0.8 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -193,7 +238,6 @@ const Index = () => {
                 <AnimatePresence mode="wait">
                   {!noButtonGone ? (
                     <div key="no-btn-area" className="relative">
-                      {/* "NOPE!" popup text */}
                       {phase === "runaway" && (
                         <motion.span
                           className="absolute -top-8 left-1/2 -translate-x-1/2 font-serif text-valentine-gold-light text-sm font-bold pointer-events-none whitespace-nowrap"
@@ -213,7 +257,6 @@ const Index = () => {
                         animate={
                           phase === "runaway"
                             ? {
-                                // Nervous shake → jump up → spin & shrink away
                                 x: [0, -4, 6, -6, 4, -3, 5, 0, 0, 0, 300],
                                 y: [0, 0, 0, 0, 0, 0, 0, 0, -60, -40, 200],
                                 rotate: [0, -2, 3, -3, 2, -2, 3, 0, -15, 720, 1440],
