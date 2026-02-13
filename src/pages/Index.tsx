@@ -4,6 +4,7 @@ import GoldParticles from "@/components/valentine/GoldParticles";
 import GoldBorder from "@/components/valentine/GoldBorder";
 import HeartExplosion from "@/components/valentine/HeartExplosion";
 import LoveGame from "@/components/valentine/LoveGame";
+import GiftPicker from "@/components/valentine/GiftPicker";
 import PhotoSlideshow from "@/components/valentine/PhotoSlideshow";
 
 const LOVE_LETTER_PARAGRAPHS = [
@@ -23,6 +24,7 @@ const Index = () => {
   const [saidYes, setSaidYes] = useState(false);
   const [noButtonGone, setNoButtonGone] = useState(false);
   const [showGame, setShowGame] = useState(false);
+  const [showGiftPicker, setShowGiftPicker] = useState(false);
 
   useEffect(() => {
     const timers = [
@@ -48,8 +50,20 @@ const Index = () => {
   const questionWords = ["Will", "you", "be", "my", "Valentine?"];
 
   if (saidYes) {
+    if (showGiftPicker) {
+      return <GiftPicker onBack={() => setShowGiftPicker(false)} />;
+    }
+
     if (showGame) {
-      return <LoveGame onBack={() => setShowGame(false)} />;
+      return (
+        <LoveGame
+          onBack={() => setShowGame(false)}
+          onFinish={() => {
+            setShowGame(false);
+            setShowGiftPicker(true);
+          }}
+        />
+      );
     }
 
     return (

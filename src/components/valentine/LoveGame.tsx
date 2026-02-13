@@ -44,7 +44,7 @@ const QUIZ: QuizQuestion[] = [
   },
 ];
 
-const LoveGame = ({ onBack }: { onBack: () => void }) => {
+const LoveGame = ({ onBack, onFinish }: { onBack: () => void; onFinish?: () => void }) => {
   const [currentQ, setCurrentQ] = useState(0);
   const [showResponse, setShowResponse] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -101,6 +101,18 @@ const LoveGame = ({ onBack }: { onBack: () => void }) => {
           >
             Back to love letter 💌
           </motion.button>
+          {onFinish && (
+            <motion.button
+              onClick={onFinish}
+              className="mt-4 px-8 py-3 font-serif text-lg tracking-wider text-valentine-gold
+                bg-transparent border border-valentine-gold/50 rounded-sm
+                hover:bg-valentine-gold/10 hover:shadow-[0_0_20px_hsla(43,80%,55%,0.2)] transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              One more surprise… 🎁
+            </motion.button>
+          )}
         </motion.div>
       </div>
     );
