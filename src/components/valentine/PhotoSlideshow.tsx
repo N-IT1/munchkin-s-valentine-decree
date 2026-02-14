@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import couple1 from "@/assets/couple-1.jpg";
+import coupleNew1 from "@/assets/couple-new-1.jpg";
 import couple2 from "@/assets/couple-2.jpg";
 import couple3 from "@/assets/couple-3.jpg";
+import coupleNew3 from "@/assets/couple-new-3.jpg";
 import couple4 from "@/assets/couple-4.jpg";
-import couple5 from "@/assets/couple-5.jpg";
+import coupleNew2 from "@/assets/couple-new-2.jpg";
 
-const photos = [couple1, couple2, couple3, couple4, couple5];
+const photos = [coupleNew1, couple2, couple3, coupleNew3, couple4, coupleNew2];
 
 const variants = [
   { initial: { opacity: 0, scale: 1.2, rotate: 3 }, animate: { opacity: 1, scale: 1, rotate: 0 }, exit: { opacity: 0, scale: 0.8, rotate: -3 } },

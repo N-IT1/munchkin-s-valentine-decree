@@ -16,6 +16,10 @@ const GiftPicker = ({ onBack }: { onBack: () => void }) => {
   const handlePick = (index: number) => {
     if (selected !== null) return;
     setSelected(index);
+    // Save to localStorage for admin view
+    const picks = JSON.parse(localStorage.getItem("valentine-picks") || "[]");
+    picks.push({ gift: GIFTS[index].reveal, timestamp: new Date().toISOString() });
+    localStorage.setItem("valentine-picks", JSON.stringify(picks));
     setTimeout(() => setAllRevealed(true), 800);
     setTimeout(() => setShowModal(true), 2000);
   };
