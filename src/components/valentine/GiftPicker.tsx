@@ -128,32 +128,34 @@ const GiftPicker = ({ onBack }: { onBack: () => void }) => {
               onClick={() => setShowModal(false)}
             />
             <motion.div
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] w-[85%] max-w-sm
-                bg-valentine-bg border border-valentine-gold/50 rounded-sm p-4 sm:p-6 shadow-[0_0_40px_hsla(43,80%,55%,0.2)]
-                max-h-[85vh] overflow-y-auto"
+              className="fixed left-1/2 top-8 -translate-x-1/2 z-[70] w-[90%] max-w-sm
+                bg-valentine-bg border border-valentine-gold/50 rounded-sm 
+                p-3 sm:p-6 shadow-[0_0_40px_hsla(43,80%,55%,0.2)]
+                max-h-[calc(100vh-4rem)] overflow-y-auto
+                [&]:text-xs sm:[&]:text-base"
               initial={{ opacity: 0, scale: 0.8, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ type: "spring", duration: 0.6 }}
             >
               <motion.div
-                className="text-4xl text-center mb-4"
+                className="text-3xl sm:text-4xl text-center mb-2 sm:mb-4"
                 animate={{ rotate: [0, -10, 10, -10, 0] }}
                 transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
               >
                 📸
               </motion.div>
-              <h3 className="font-serif text-xl text-valentine-gold text-center mb-3">
+              <h3 className="font-serif text-base sm:text-xl text-valentine-gold text-center mb-2 sm:mb-3">
                 You picked:
               </h3>
-              <p className="text-valentine-cream text-center text-lg font-serif mb-4">
+              <p className="text-valentine-cream text-center text-sm sm:text-lg font-serif mb-2 sm:mb-4">
                 {selected !== null ? GIFTS[selected].reveal : ""}
               </p>
-              <div className="h-px w-full bg-valentine-gold/20 mb-4" />
-              <p className="text-valentine-cream/80 text-center text-sm leading-relaxed mb-5">
+              <div className="h-px w-full bg-valentine-gold/20 mb-2 sm:mb-4" />
+              <p className="text-valentine-cream/80 text-center text-xs sm:text-sm leading-relaxed mb-3 sm:mb-5">
                 Now screenshot this and send it to <span className="text-valentine-gold font-serif">Pumpkin</span> 💝
                 <br />
-                <span className="text-valentine-cream/50 text-xs mt-1 block">
+                <span className="text-valentine-cream/50 text-[10px] sm:text-xs mt-1 block">
                   ...with your account number 😏
                 </span>
               </p>
