@@ -128,7 +128,7 @@ const GiftPicker = ({ onBack }: { onBack: () => void }) => {
               onClick={() => setShowModal(false)}
             />
             <motion.div
-              className="fixed left-1/2 top-8 -translate-x-1/2 z-[70] w-[90%] max-w-sm
+              className="fixed left-4 top-8 z-[70] w-[90%] max-w-sm
                 bg-valentine-bg border border-valentine-gold/50 rounded-sm 
                 p-3 sm:p-6 shadow-[0_0_40px_hsla(43,80%,55%,0.2)]
                 max-h-[calc(100vh-4rem)] overflow-y-auto
